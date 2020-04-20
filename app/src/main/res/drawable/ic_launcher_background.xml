@@ -1,0 +1,137 @@
+/**
+ * Copyright (C) 2014 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package android.hardware.fingerprint;
+
+import android.annotation.NonNull;
+import android.annotation.Nullable;
+import android.annotation.RequiresPermission;
+import android.annotation.SystemService;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.os.Binder;
+import android.os.CancellationSignal;
+import android.os.CancellationSignal.OnCancelListener;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.IRemoteCallback;
+import android.os.Looper;
+import android.os.PowerManager;
+import android.os.RemoteException;
+import android.os.UserHandle;
+import android.security.keystore.AndroidKeyStoreProvider;
+import android.util.Log;
+import android.util.Slog;
+
+import java.security.Signature;
+import java.util.List;
+
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+
+import static android.Manifest.permission.INTERACT_ACROSS_USERS;
+import static android.Manifest.permission.MANAGE_FINGERPRINT;
+import static android.Manifest.permission.USE_FINGERPRINT;
+
+/**
+ * A class that coordinates access to the fingerprint hardware.
+ */
+@SystemService(Context.FINGERPRINT_SERVICE)
+public class FingerprintManager {
+    private static final String TAG = "FingerprintManager";
+    private static final boolean DEBUG = true;
+    private static final int MSG_ENROLL_RESULT = 100;
+    private static final int MSG_ACQUIRED = 101;
+    private static final int MSG_AUTHENTICATION_SUCCEEDED = 102;
+    private static final int MSG_AUTHENTICATION_FAILED = 103;
+    private static final int MSG_ERROR = 104;
+    private static final int MSG_REMOVED = 105;
+    private static final int MSG_ENUMERATED = 106;
+
+    //
+    // Error messages from fingerprint hardware during initilization, enrollment, authentication or
+    // removal. Must agree with the list in fingerprint.h
+    //
+
+    /**
+     * The hardware is unavailable. Try again later.
+     */
+    public static final int FINGERPRINT_ERROR_HW_UNAVAILABLE = 1;
+
+    /**
+     * Error state returned when the sensor was unable to process the current image.
+     */
+    public static final int FINGERPRINT_ERROR_UNABLE_TO_PROCESS = 2;
+
+    /**
+     * Error state returned when the current request has been running too long. This is intended to
+     * prevent programs from waiting for the fingerprint sensor indefinitely. The timeout is
+     * platform and sensor-specific, but is generally on the order of 30 seconds.
+     */
+    public static final int FINGERPRINT_ERROR_TIMEOUT = 3;
+
+    /**
+     * Error state returned for operations like enrollment; the operation cannot be completed
+     * because there's not enough storage remaining to complete the operation.
+     */
+    public static final int FINGERPRINT_ERROR_NO_SPACE = 4;
+
+    /**
+     * The operation was canceled because the fingerprint sensor is unavailable. For example,
+     * this may happen when the user is switched, the device is locked or another pending operation
+     * prevents or disables it.
+     */
+    public static final int FINGERPRINT_ERROR_CANCELED = 5;
+
+    /**
+     * The {@link FingerprintManager#remove} call failed. Typically this will happen when the
+     * provided fingerprint id was incorrect.
+     *
+     * @hide
+     */
+    public static final int FINGERPRINT_ERROR_UNABLE_TO_REMOVE = 6;
+
+   /**
+     * The operation was canceled because the API is locked out due to too many attempts.
+     */
+    public static final int FINGERPRINT_ERROR_LOCKOUT = 7;
+
+    /**
+     * Hardware vendors may extend this list if there are conditions that do not fall under one of
+     * the above categories. Vendors are responsible for providing error strings for these errors.
+     * @hide
+     */
+    public static final int FINGERPRINT_ERROR_VENDOR = 8;
+
+    /**
+     * The operation was canceled because FINGERPRINT_ERROR_LOCKOUT occurred too many times.
+     * Fingerprint authentication is disabled until the user unlocks with strong authentication
+     * (PIN/Pattern/Password)
+     * @hide
+     */
+    public static final int FINGERPRINT_ERROR_LOCKOUT_PERMANENT = 9;
+
+    /**
+     * @hide
+     */
+    public static final int FINGERPRINT_ERROR_VENDOR_BASE = 1000;
+
+    //
+    // Image acquisition messages. Must agree with those in fingerprint.h
+    //
+
+    /**
+     * The image a
