@@ -1,13 +1,27 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Android
+# Build your Android project with Gradle.
+# Add steps that test, sign, and distribute the APK, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
 steps:
 - task: Gradle@2
   inputs:
+    workingDirectory: ''
     gradleWrapperFile: 'gradlew'
-    tasks: 'build'
-    publishJUnitResults: true
-    testResultsFiles: '**/TEST-*.xml'
+    gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
     javaHomeOption: 'JDKVersion'
-    sonarQubeRunAnalysis: false
+    tasks: 'assembleDebug'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'Accelerometer/app/build/outputs/apk/debug'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
