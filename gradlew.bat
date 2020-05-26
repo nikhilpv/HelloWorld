@@ -1,18 +1,100 @@
-<?xml version="1.0" encoding='utf-8' standalone='no'?>
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-<!-- blaze-out/k8-opt/genfiles/java/com/google/android/gmscore/integ/client/base/res/values-et/strings.xml -->
-<eat-comment/>
-<string name="common_google_play_services_enable_button" msgid="8585111718777012708">"Luba"</string>
-<string name="common_google_play_services_enable_text" msgid="7045129128108380659">"Rakendus <xliff:g id="APP_NAME">%1$s</xliff:g> töötab ainult siis, kui lubate Google Play teenused."</string>
-<string name="common_google_play_services_enable_title" msgid="3147157405986503375">"Google Play teenuste lubamine"</string>
-<string name="common_google_play_services_install_button" msgid="9115728400623041681">"Installi"</string>
-<string name="common_google_play_services_install_text" msgid="8179894293032530091">"Rakendus <xliff:g id="APP_NAME">%1$s</xliff:g> töötab ainult koos Google Play teenustega, mida teie seadmes pole."</string>
-<string name="common_google_play_services_install_title" msgid="7442193194585196676">"Google Play teenuste hankimine"</string>
-<string name="common_google_play_services_notification_channel_name" msgid="4293541511340436975">"Google Play teenuste saadavalolek"</string>
-<string name="common_google_play_services_notification_ticker" msgid="180394615667698242">"Viga Google Play teenustes"</string>
-<string name="common_google_play_services_unsupported_text" msgid="5501187292256987189">"Rakendus <xliff:g id="APP_NAME">%1$s</xliff:g> töötab ainult koos Google Play teenustega, mida teie seadmes ei toetata."</string>
-<string name="common_google_play_services_update_button" msgid="8172070149091615356">"Värskenda"</string>
-<string name="common_google_play_services_update_text" msgid="7773943415006962566">"Rakenduse <xliff:g id="APP_NAME">%1$s</xliff:g> töötamiseks peate värskendama Google Play teenuseid."</string>
-<string name="common_google_play_services_update_title" msgid="8706675115216073244">"Google Play teenuste värskendamine"</string>
-<string name="common_google_play_services_updating_text" msgid="7894275749778928941">"Rakendus <xliff:g id="APP_NAME">%1$s</xliff:g> töötab ainult koos Google Play teenustega, mida praegu värskendatakse."</string>
-<stri
+@rem
+@rem Copyright 2015 the original author or authors.
+@rem
+@rem Licensed under the Apache License, Version 2.0 (the "License");
+@rem you may not use this file except in compliance with the License.
+@rem You may obtain a copy of the License at
+@rem
+@rem      https://www.apache.org/licenses/LICENSE-2.0
+@rem
+@rem Unless required by applicable law or agreed to in writing, software
+@rem distributed under the License is distributed on an "AS IS" BASIS,
+@rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+@rem See the License for the specific language governing permissions and
+@rem limitations under the License.
+@rem
+
+@if "%DEBUG%" == "" @echo off
+@rem ##########################################################################
+@rem
+@rem  Gradle startup script for Windows
+@rem
+@rem ##########################################################################
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+set DIRNAME=%~dp0
+if "%DIRNAME%" == "" set DIRNAME=.
+set APP_BASE_NAME=%~n0
+set APP_HOME=%DIRNAME%
+
+@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
+
+@rem Find java.exe
+if defined JAVA_HOME goto findJavaFromJavaHome
+
+set JAVA_EXE=java.exe
+%JAVA_EXE% -version >NUL 2>&1
+if "%ERRORLEVEL%" == "0" goto init
+
+echo.
+echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+
+goto fail
+
+:findJavaFromJavaHome
+set JAVA_HOME=%JAVA_HOME:"=%
+set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+
+if exist "%JAVA_EXE%" goto init
+
+echo.
+echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+
+goto fail
+
+:init
+@rem Get command-line arguments, handling Windows variants
+
+if not "%OS%" == "Windows_NT" goto win9xME_args
+
+:win9xME_args
+@rem Slurp the command line arguments.
+set CMD_LINE_ARGS=
+set _SKIP=2
+
+:win9xME_args_slurp
+if "x%~1" == "x" goto execute
+
+set CMD_LINE_ARGS=%*
+
+:execute
+@rem Setup the command line
+
+set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
+
+@rem Execute Gradle
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%
+
+:end
+@rem End local scope for the variables with windows NT shell
+if "%ERRORLEVEL%"=="0" goto mainEnd
+
+:fail
+rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+rem the _cmd.exe /c_ return code!
+if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
+exit /b 1
+
+:mainEnd
+if "%OS%"=="Windows_NT" endlocal
+
+:omega
