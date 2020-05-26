@@ -16,4 +16,3 @@
 app/build
 app/proguard-rules.pro
 gradle
-gradlew.bat
