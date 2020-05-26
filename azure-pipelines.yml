@@ -1,0 +1,26 @@
+# Android
+# Build your Android project with Gradle.
+# Add steps that test, sign, and distribute the APK, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: Gradle@2
+  inputs:
+    workingDirectory: 'HelloWorld/'
+    gradleWrapperFile: 'HelloWorld/gradlew'
+    gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
+    javaHomeOption: 'JDKVersion'
+    tasks: 'assembleDebug'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'Accelerometer/app/build/outputs/apk/debug'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
