@@ -19,8 +19,26 @@ steps:
     javaHomeOption: 'JDKVersion'
     tasks: 'assembleDebug'
 
+- task: AndroidSigning@3
+  inputs:
+   apkFiles: '**/*.apk'
+   apksign: true
+   apksignerKeystoreFile: 'keystore.jks'
+   apksignerKeystorePassword: 'Mobile01'
+   apksignerKeystoreAlias: 'HelloWorld'
+   apksignerKeyPassword: 'Mobile01'
+   apksignerArguments: --out $(Build.SourcesDirectory)/app/build/outputs/apk/release/app.release.apk
+   zipalign: true
+
+- task: CopyFiles@2
+  inputs:
+   SourceFolder: $(Build.SourcesDirectory)
+   contents: '**/*.release.apk'
+   targetFolder: '$(build.artifactStagingDirectory)'
+   overWrite: true
+
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: 'app/build/outputs/apk/debug'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+   pathtoPublish: '$(Build.ArtifactStagingDirectory)/app/build/outputs/apk/release/'
+   artifactName: 'apks'
+   publishLocation: 'container'
